@@ -11,7 +11,7 @@ ProductAI SDK for Python
    :target: https://codeclimate.com/github/MalongTech/productai-python-sdk
       :alt: Code Climate
 
-ProductAI® SDKs enable using ProductAI® APIs easily in the programming languege of your choice. You can use our Python SDK to send image queries and maintain your datasets.
+ProductAI® SDKs enable using ProductAI® APIs easily in the programming language of your choice. You can use our Python SDK to send image queries and maintain your datasets.
 
 installation
 ----
