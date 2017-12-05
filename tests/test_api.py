@@ -51,7 +51,7 @@ class TestQuery:
 
         with pytest.raises(ValueError) as val_err:
             api.query(url, search='123')
-        assert str(val_err.value) == "The keys ['search'] are conflicted with built-in parameters."
+        assert str(val_err.value) == "The keys ['search'] are in conflict with built-in parameters."
 
     def test_search_by_tag(self, mocker):
         url = 'http://httpbin.org/image'

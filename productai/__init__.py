@@ -116,7 +116,7 @@ class API(object):
         if kwargs:
             bad_keys = [k for k in ['url', 'search'] if k in kwargs]
             if len(bad_keys) > 0:
-                raise ValueError('The keys %r are conflicted with built-in parameters.' % bad_keys)
+                raise ValueError('The keys %r are in conflict with built-in parameters.' % bad_keys)
             data.update(kwargs)
 
         return self.client.post(self.base_url, data=data, files=files)
