@@ -24,6 +24,7 @@ API_VERSION = '1'
 
 
 class Client(object):
+
     def __init__(self, access_key_id, access_key_secret, session=None):
         self.access_key_id = access_key_id
         self.access_key_secret = access_key_secret
@@ -68,6 +69,16 @@ class Client(object):
         )
         return resp
 
+    def put(self, api_url, data=None, timeout=30):
+        headers = self.get_headers(data)
+        resp = self.session.put(
+            api_url,
+            data=data,
+            headers=headers,
+            timeout=timeout
+        )
+        return resp
+
     def get_auth_headers(self, data):
         headers = make_auth_headers(self.access_key_id, 'POST')
         headers['x-ca-signature'] = calc_signature(
@@ -88,6 +99,7 @@ class Client(object):
 
 
 class API(object):
+
     def __init__(self, client, type_, id_):
         self.client = client
         self.type_ = type_
@@ -174,6 +186,7 @@ class ColorAnalysisAPI(API):
 
 
 class BatchAPI(API):
+
     def __init__(self, client):
         self.client = client
         self.type_ = 'batch'
@@ -229,6 +242,7 @@ class BatchAPI(API):
 
 
 class ImageSetAPI(API):
+
     def __init__(self, client, image_set_id):
         super(ImageSetAPI, self).__init__(
             client, 'image_sets', '_0000014'
@@ -263,6 +277,17 @@ class ImageSetAPI(API):
     def delete_images(self, f_urls_to_delete):
         urls_to_delete = {'urls_to_delete': f_urls_to_delete}
         return self.client.post(self.base_url, files=urls_to_delete)
+
+    def get_image_set(self):
+        return self.client.get(self.base_url)
+
+    def update_image_set(self, name=None, description=None):
+        form = {}
+        if name:
+            form['name'] = name
+        if description:
+            form['description'] = description
+        return self.client.put(self.base_url, data=form)
 
 
 def short_uuid(length):
