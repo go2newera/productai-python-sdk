@@ -35,6 +35,21 @@ class TestGetPayloadAsStr:
         else:
             assert res == 'image_url=http://httpbin.org/image&limit=3&meta=头像&x-ca-version=1.0'.encode('utf8')
 
+    def test_payloads_should_append_json(self):
+        headers = {'x-ca-version': '1.0'}
+        res = m.get_payload_as_str(headers, form=None, json_={'key': 'value'})
+        if six.PY2:
+            assert res == (u'x-ca-version=1.0' + u'{"key": "value"}').encode('utf8')
+        else:
+            assert res == ('x-ca-version=1.0' + '{"key": "value"}').encode('utf8')
+
+        form = {'meta': '头像'}
+        res = m.get_payload_as_str(headers, form, json_={'key': 'value'})
+        if six.PY2:
+            assert res == (u'meta=头像&x-ca-version=1.0' + u'{"key": "value"}').encode('utf8')
+        else:
+            assert res == ('meta=头像&x-ca-version=1.0' + '{"key": "value"}').encode('utf8')
+
 
 def test_calc_signature(mocker):
     headers = {'x-ca-version': '1.0'}
