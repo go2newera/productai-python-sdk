@@ -61,6 +61,33 @@ Remove images from image set
         resp = api.delete_images_in_bulk(f)
 
 
+Get image set info
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_image_set_api(image_set_id)
+    resp = api.get_image_set()
+
+
+Update image set name and/or description
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_image_set_api(image_set_id)
+    resp = api.update_image_set(name="xxx")
+    or
+    resp = api.update_image_set(description="xxx")
+    or
+    resp = api.update_image_set(name="xxx", description="xxx")
+
 
 Search images
 ~~~~
@@ -149,6 +176,33 @@ Use other service
     api = cli.get_image_set_api(image_set_id)
     with open("images.csv") as f:
         resp = api.delete_images_in_bulk(f)
+
+查看图集信息
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_image_set_api(image_set_id)
+    resp = api.get_image_set()
+
+
+更新图集名字和/或描述
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_image_set_api(image_set_id)
+    resp = api.update_image_set(name="xxx")
+    or
+    resp = api.update_image_set(description="xxx")
+    or
+    resp = api.update_image_set(name="xxx", description="xxx")
 
 
 搜索图片
