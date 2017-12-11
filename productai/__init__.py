@@ -45,6 +45,9 @@ class Client(object):
     def get_image_set_api(self, image_set_id):
         return ImageSetAPI(self, image_set_id)
 
+    def get_customer_service_api(self, service_id):
+        return CustomerServiceAPI(self, service_id)
+
     def get_color_analysis_api(self, sub_type):
         return ColorAnalysisAPI(self, sub_type)
 
@@ -69,30 +72,32 @@ class Client(object):
         )
         return resp
 
-    def put(self, api_url, data=None, timeout=30):
-        headers = self.get_headers(data)
+    def put(self, api_url, data=None, json=None, timeout=30):
+        headers = self.get_headers(data, json=json)
         resp = self.session.put(
             api_url,
             data=data,
+            json=json,
             headers=headers,
             timeout=timeout
         )
         return resp
 
-    def get_auth_headers(self, data):
+    def get_auth_headers(self, data, json=None):
         headers = make_auth_headers(self.access_key_id, 'POST')
         headers['x-ca-signature'] = calc_signature(
             headers,
             data,
-            self.access_key_secret
+            self.access_key_secret,
+            json=json
         )
         return headers
 
     def set_lang(self, lang):
         self.lang = lang
 
-    def get_headers(self, data):
-        headers = self.get_auth_headers(data)
+    def get_headers(self, data, json=None):
+        headers = self.get_auth_headers(data, json=json)
         if self.lang:
             headers['Accept-Language'] = self.lang
         return headers
@@ -290,6 +295,32 @@ class ImageSetAPI(API):
         return self.client.put(self.base_url, data=form)
 
 
+class CustomerServiceAPI(API):
+
+    def __init__(self, client, service_id):
+        super(CustomerServiceAPI, self).__init__(
+            client, 'customer_services', '_0000172'
+        )
+        self.service_id = service_id
+
+    def query(self, *args, **kwargs):
+        raise NotImplementedError()
+
+    @property
+    def base_url(self):
+        return '%s/%s' % (
+            super(CustomerServiceAPI, self).base_url,
+            self.service_id
+        )
+
+    def get_service(self):
+        return self.client.get(self.base_url)
+
+    def update_service(self, name):
+        data = {'name': name}
+        return self.client.put(self.base_url, json=data)
+
+
 def short_uuid(length):
     charset = string.ascii_lowercase + string.digits
     return ''.join([random.choice(charset) for i in range(length)])
@@ -307,9 +338,9 @@ def make_auth_headers(access_key_id, method='POST'):
     return headers
 
 
-def calc_signature(headers, form, secret_key):
+def calc_signature(headers, form, secret_key, json=None):
     secret_key = to_bytes(secret_key)
-    payload = get_payload_as_str(headers, form)
+    payload = get_payload_as_str(headers, form, json_=json)
     signature = hmac.new(
         secret_key,
         payload,
@@ -318,7 +349,7 @@ def calc_signature(headers, form, secret_key):
     return base64.b64encode(signature.digest())
 
 
-def get_payload_as_str(headers, form):
+def get_payload_as_str(headers, form, json_=None):
     payload = dict(headers)
 
     if form:
@@ -330,7 +361,10 @@ def get_payload_as_str(headers, form):
         v = v.strip()
         sort_value.append(b'%s=%s' % (to_bytes(k), v))
 
-    return b'&'.join(sort_value)
+    sign = b'&'.join(sort_value)
+    if json_:
+        sign += to_bytes(json.dumps(json_))
+    return sign
 
 
 def to_bytes(v):

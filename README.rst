@@ -117,6 +117,29 @@ Search images
     resp = api.query(image_url, count=10, tags={'and': ['MALE', 'SHOES', {'or': ['TMALL', 'TAOBAO']}]})
 
 
+Get customer service info
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_customer_service_api(service_id)
+    resp = api.get_service()
+
+
+Update customer service name
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_customer_service_api(service_id)
+    resp = api.update_service("xxx")
+
 
 Use other service
 ~~~~~~
@@ -232,6 +255,29 @@ Use other service
     # 或者使用复杂标签搜索
     resp = api.query(image_url, count=10, tags={'and': ['MALE', 'SHOES', {'or': ['TMALL', 'TAOBAO']}]})
 
+
+获取自建服务信息
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_customer_service_api(service_id)
+    resp = api.get_service()
+
+
+更新自建服务名字
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_customer_service_api(service_id)
+    resp = api.update_service("xxx")
 
 
 使用其他服务
