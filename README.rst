@@ -61,6 +61,18 @@ Remove images from image set
         resp = api.delete_images_in_bulk(f)
 
 
+Create new image set
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_image_set_creating_api()
+    resp = api.create_image_set(name='xxx', description='xxx')
+
+
 Get image set info
 ~~~~~~~
 
@@ -87,6 +99,31 @@ Update image set name and/or description
     resp = api.update_image_set(description="xxx")
     or
     resp = api.update_image_set(name="xxx", description="xxx")
+
+
+Delete image set
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_image_set_api(image_set_id)
+    resp = api.delete_image_set()
+
+
+Create customer service
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_image_set_api(image_set_id)
+    # scenario must be supported by system
+    resp = api.create_service(name='xxx', scenario='fashion')
 
 
 Search images
@@ -139,6 +176,18 @@ Update customer service name
     cli = Client(access_key_id, access_key_secret)
     api = cli.get_customer_service_api(service_id)
     resp = api.update_service("xxx")
+
+
+Delete customer service
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_customer_service_api(service_id)
+    resp = api.delete_service()
 
 
 Use other service
@@ -200,6 +249,19 @@ Use other service
     with open("images.csv") as f:
         resp = api.delete_images_in_bulk(f)
 
+
+创建新图集
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_image_set_creating_api()
+    resp = api.create_image_set(name='xxx', description='xxx')
+
+
 查看图集信息
 ~~~~~~~
 
@@ -226,6 +288,31 @@ Use other service
     resp = api.update_image_set(description="xxx")
     or
     resp = api.update_image_set(name="xxx", description="xxx")
+
+
+删除图集
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_image_set_api(image_set_id)
+    resp = api.delete_image_set()
+
+
+创建自建服务
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_image_set_api(image_set_id)
+    # scenario 必须是系统支持的名字
+    resp = api.create_service(name='xxx', scenario='fashion')
 
 
 搜索图片
@@ -278,6 +365,18 @@ Use other service
     cli = Client(access_key_id, access_key_secret)
     api = cli.get_customer_service_api(service_id)
     resp = api.update_service("xxx")
+
+
+删除自建服务
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_customer_service_api(service_id)
+    resp = api.delete_service()
 
 
 使用其他服务

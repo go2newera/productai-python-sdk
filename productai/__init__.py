@@ -42,6 +42,9 @@ class Client(object):
     def get_batch_api(self):
         return BatchAPI(self)
 
+    def get_image_set_creating_api(self):
+        return ImageSetCreatingAPI(self)
+
     def get_image_set_api(self, image_set_id):
         return ImageSetAPI(self, image_set_id)
 
@@ -61,11 +64,12 @@ class Client(object):
         )
         return resp
 
-    def post(self, api_url, data=None, files=None, timeout=30):
-        headers = self.get_headers(data)
+    def post(self, api_url, data=None, json=None, files=None, timeout=30):
+        headers = self.get_headers(data, json=json)
         resp = self.session.post(
             api_url,
             data=data,
+            json=json,
             headers=headers,
             files=files,
             timeout=timeout
@@ -80,6 +84,16 @@ class Client(object):
             json=json,
             headers=headers,
             timeout=timeout
+        )
+        return resp
+
+    def delete(self, api_url, **kwargs):
+        headers = self.get_headers(kwargs.get('params'))
+        resp = self.session.delete(
+            api_url,
+            headers=headers,
+            timeout=30,
+            **kwargs
         )
         return resp
 
@@ -246,6 +260,20 @@ class BatchAPI(API):
         return self.client.get(endpoint)
 
 
+class ImageSetCreatingAPI(API):
+
+    def __init__(self, client):
+        super(ImageSetCreatingAPI, self).__init__(
+            client, 'image_sets', '_0000014'
+        )
+
+    def create_image_set(self, name, description=None):
+        data = {'name': name}
+        if description:
+            data['description'] = description
+        return self.client.post(self.base_url, json=data)
+
+
 class ImageSetAPI(API):
 
     def __init__(self, client, image_set_id):
@@ -294,6 +322,14 @@ class ImageSetAPI(API):
             form['description'] = description
         return self.client.put(self.base_url, data=form)
 
+    def delete_image_set(self):
+        return self.client.delete(self.base_url)
+
+    def create_service(self, name, scenario):
+        data = {'name': name, 'scenario': scenario}
+        api_url = self.base_url + '/services'
+        return self.client.post(api_url, json=data)
+
 
 class CustomerServiceAPI(API):
 
@@ -319,6 +355,9 @@ class CustomerServiceAPI(API):
     def update_service(self, name):
         data = {'name': name}
         return self.client.put(self.base_url, json=data)
+
+    def delete_service(self):
+        return self.client.delete(self.base_url)
 
 
 def short_uuid(length):
