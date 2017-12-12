@@ -123,6 +123,7 @@ class API(object):
         self.client = client
         self.type_ = type_
         self.id_ = id_
+        self.url_root_ = API_URL
 
     def query(self, image, loc='0-0-1-1', count=20, tags=None, **kwargs):
         data = {
@@ -154,7 +155,15 @@ class API(object):
 
     @property
     def base_url(self):
-        return '/'.join([API_URL, self.type_, self.id_])
+        return os.path.join(self.url_root, self.type_, self.id_)
+
+    @property
+    def url_root(self):
+        return self.url_root_
+
+    @url_root.setter
+    def url_root(self, value):
+        self.url_root_ = value
 
 
 class ColorAnalysisAPI(API):
