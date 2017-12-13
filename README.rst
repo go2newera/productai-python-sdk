@@ -209,10 +209,11 @@ Set URL_ROOT
 
     from productai import Client
 
+    # default value is: https://api.productai.cn
+    cli = Client(access_key_id, access_key_secret, url_root='https://api-bj.productai.cn')
+    or
     cli = Client(access_key_id, access_key_secret)
-    api = cli.get_image_set_api(image_set_id)
-    # default value is https://api.productai.cn
-    api.url_root = 'https://api-bj.productai.cn'
+    cli.url_root = 'https://api-bj.productai.cn'
 
 
 安装
@@ -411,8 +412,9 @@ Set URL_ROOT
 
     from productai import Client
 
+    # 默认值为: https://api.productai.cn
+    cli = Client(access_key_id, access_key_secret, url_root='https://api-bj.productai.cn')
+    or
     cli = Client(access_key_id, access_key_secret)
-    api = cli.get_image_set_api(image_set_id)
-    # 默认为: https://api.productai.cn
-    api.url_root = 'https://api-bj.productai.cn'
+    cli.url_root = 'https://api-bj.productai.cn'
 
