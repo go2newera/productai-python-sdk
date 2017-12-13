@@ -5,9 +5,15 @@ import pytest
 import productai as m
 
 
+@pytest.fixture()
+def client(mocker):
+    return mocker.Mock(url_root='http://api.example.com')
+
+
 class TestQuery:
-    def test_should_upload_file_like_obj(self, mocker):
-        api = m.API(mocker.Mock(), 'classify_fashion', '_0000001')
+
+    def test_should_upload_file_like_obj(self, client, mocker):
+        api = m.API(client, 'classify_fashion', '_0000001')
         f = mocker.Mock()
         f.read = lambda: b'1111'
 
@@ -19,8 +25,8 @@ class TestQuery:
             files={'search': f}
         )
 
-    def test_should_accept_image_url(self, mocker):
-        api = m.API(mocker.Mock(), 'classify_fashion', '_0000001')
+    def test_should_accept_image_url(self, client, mocker):
+        api = m.API(client, 'classify_fashion', '_0000001')
         image = 'http://httpbin.org/image'
 
         api.query(image, '0-0-1-1')
@@ -31,9 +37,9 @@ class TestQuery:
             files=None,
         )
 
-    def test_search_with_option(self, mocker):
+    def test_search_with_option(self, client, mocker):
         url = 'http://httpbin.org/image'
-        api = m.API(mocker.Mock(), 'search', '******')
+        api = m.API(client, 'search', '******')
 
         api.query(url)
         api.client.post.assert_called_with(
@@ -53,9 +59,9 @@ class TestQuery:
             api.query(url, search='123')
         assert str(val_err.value) == "The keys ['search'] are in conflict with built-in parameters."
 
-    def test_search_by_tag(self, mocker):
+    def test_search_by_tag(self, client, mocker):
         url = 'http://httpbin.org/image'
-        api = m.API(mocker.Mock(), 'search', '******')
+        api = m.API(client, 'search', '******')
 
         api.query(url, tags=None)
         api.client.post.assert_called_with(
@@ -117,6 +123,7 @@ class TestQuery:
 
 
 class TestNormalizeImagesFile:
+
     def test_should_accept_file_name(self, tmpdir):
         csv_row = "http://x.com/a.jpg,12,good"
         f = tmpdir.mkdir('images').join('bulk1.csv')

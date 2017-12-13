@@ -202,6 +202,20 @@ Use other service
     resp = api.query(image_url)
 
 
+Set URL_ROOT
+~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    # default value is: https://api.productai.cn
+    cli = Client(access_key_id, access_key_secret, url_root='https://api-bj.productai.cn')
+    or
+    cli = Client(access_key_id, access_key_secret)
+    cli.url_root = 'https://api-bj.productai.cn'
+
+
 安装
 ----
 
@@ -389,3 +403,18 @@ Use other service
     cli = Client(access_key_id, access_key_secret)
     api = cli.get_api(service_type, service_id)
     resp = api.query(image_url)
+
+
+设置 URL_ROOT
+~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    # 默认值为: https://api.productai.cn
+    cli = Client(access_key_id, access_key_secret, url_root='https://api-bj.productai.cn')
+    or
+    cli = Client(access_key_id, access_key_secret)
+    cli.url_root = 'https://api-bj.productai.cn'
+
