@@ -2,12 +2,6 @@
 import os
 import csv
 import tempfile
-import time
-import hmac
-import base64
-import hashlib
-import string
-import random
 import json
 import datetime as dt
 from contextlib import contextmanager
@@ -57,7 +51,7 @@ class Client(object):
         return ColorAnalysisAPI(self, sub_type)
 
     def get(self, api_url, **kwargs):
-        headers = self.get_headers(kwargs.get('params'))
+        headers = self.get_headers()
         resp = self.session.get(
             api_url,
             headers=headers,
@@ -67,7 +61,7 @@ class Client(object):
         return resp
 
     def post(self, api_url, data=None, json=None, files=None, timeout=30):
-        headers = self.get_headers(data, json=json)
+        headers = self.get_headers()
         resp = self.session.post(
             api_url,
             data=data,
@@ -79,7 +73,7 @@ class Client(object):
         return resp
 
     def put(self, api_url, data=None, json=None, timeout=30):
-        headers = self.get_headers(data, json=json)
+        headers = self.get_headers()
         resp = self.session.put(
             api_url,
             data=data,
@@ -90,7 +84,7 @@ class Client(object):
         return resp
 
     def delete(self, api_url, **kwargs):
-        headers = self.get_headers(kwargs.get('params'))
+        headers = self.get_headers()
         resp = self.session.delete(
             api_url,
             headers=headers,
@@ -99,21 +93,15 @@ class Client(object):
         )
         return resp
 
-    def get_auth_headers(self, data, json=None):
-        headers = make_auth_headers(self.access_key_id, 'POST')
-        headers['x-ca-signature'] = calc_signature(
-            headers,
-            data,
-            self.access_key_secret,
-            json=json
-        )
+    def get_auth_headers(self):
+        headers = make_auth_headers(self.access_key_id)
         return headers
 
     def set_lang(self, lang):
         self.lang = lang
 
-    def get_headers(self, data, json=None):
-        headers = self.get_auth_headers(data, json=json)
+    def get_headers(self):
+        headers = self.get_auth_headers()
         if self.lang:
             headers['Accept-Language'] = self.lang
         return headers
@@ -363,60 +351,12 @@ class CustomerServiceAPI(API):
         return self.client.delete(self.base_url)
 
 
-def short_uuid(length):
-    charset = string.ascii_lowercase + string.digits
-    return ''.join([random.choice(charset) for i in range(length)])
-
-
-def make_auth_headers(access_key_id, method='POST'):
-    timestamp = int(time.time())
+def make_auth_headers(access_key_id):
     headers = {
         'x-ca-accesskeyid': access_key_id,
         'x-ca-version': API_VERSION,
-        'x-ca-timestamp': str(timestamp),
-        'x-ca-signaturenonce': short_uuid(SIGNATURE_LEN),
-        'requestmethod': method,
     }
     return headers
-
-
-def calc_signature(headers, form, secret_key, json=None):
-    secret_key = to_bytes(secret_key)
-    payload = get_payload_as_str(headers, form, json_=json)
-    signature = hmac.new(
-        secret_key,
-        payload,
-        hashlib.sha1
-    )
-    return base64.b64encode(signature.digest())
-
-
-def get_payload_as_str(headers, form, json_=None):
-    payload = dict(headers)
-
-    if form:
-        payload.update(form)
-
-    sort_value = []
-    for k in sorted(payload):
-        v = to_bytes(payload.get(k, ''))
-        v = v.strip()
-        sort_value.append(b'%s=%s' % (to_bytes(k), v))
-
-    sign = b'&'.join(sort_value)
-    if json_:
-        sign += to_bytes(json.dumps(json_))
-    return sign
-
-
-def to_bytes(v):
-    if not isinstance(v, six.binary_type):
-        if not isinstance(v, six.string_types):
-            v = str(v)
-        if six.PY2:
-            v = unicode(v)
-        v = v.encode('utf8')
-    return v
 
 
 def get_default_session():
