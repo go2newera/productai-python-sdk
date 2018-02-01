@@ -73,7 +73,19 @@ Create new image set
     resp = api.create_image_set(name='xxx', description='xxx')
 
 
-Get image set info
+Get all image sets info
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_image_sets_api()
+    resp = api.get_image_sets()
+
+
+Get a given image set info
 ~~~~~~~
 
 .. code-block:: python
@@ -276,7 +288,19 @@ Set URL_ROOT
     resp = api.create_image_set(name='xxx', description='xxx')
 
 
-查看图集信息
+查看所有图集信息
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_image_sets_api()
+    resp = api.get_image_sets()
+
+
+查看指定图集信息
 ~~~~~~~
 
 .. code-block:: python

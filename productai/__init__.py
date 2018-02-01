@@ -39,7 +39,10 @@ class Client(object):
         return BatchAPI(self)
 
     def get_image_set_creating_api(self):
-        return ImageSetCreatingAPI(self)
+        return ImageSetsAPI(self)
+
+    def get_image_sets_api(self):
+        return ImageSetsAPI(self)
 
     def get_image_set_api(self, image_set_id):
         return ImageSetAPI(self, image_set_id)
@@ -251,10 +254,10 @@ class BatchAPI(API):
         return self.client.get(endpoint)
 
 
-class ImageSetCreatingAPI(API):
+class ImageSetsAPI(API):
 
     def __init__(self, client):
-        super(ImageSetCreatingAPI, self).__init__(
+        super(ImageSetsAPI, self).__init__(
             client, 'image_sets', '_0000014'
         )
 
@@ -263,6 +266,9 @@ class ImageSetCreatingAPI(API):
         if description:
             data['description'] = description
         return self.client.post(self.base_url, json=data)
+
+    def get_image_sets(self):
+        return self.client.get(self.base_url)
 
 
 class ImageSetAPI(API):

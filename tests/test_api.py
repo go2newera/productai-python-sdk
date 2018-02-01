@@ -7,7 +7,7 @@ import productai as m
 
 @pytest.fixture()
 def client(mocker):
-    return mocker.Mock(url_root='http://api.example.com')
+    return mocker.Mock(url_root='https://api.example.com')
 
 
 class TestQuery:
@@ -149,3 +149,26 @@ class TestNormalizeImagesFile:
             assert list(reader) == imgs_info
             assert tmpdir.listdir()
         assert not tmpdir.listdir()
+
+
+class TestCreateImageSet:
+
+    def test_create_image_set(self, client):
+        name, description = 'image set name', 'a description'
+        api = m.ImageSetsAPI(client)
+        api.create_image_set(name=name)
+        api.client.post.assert_called_with(api.base_url, json={'name': name})
+
+        api.create_image_set(name=name, description=description)
+        api.client.post.assert_called_with(api.base_url, json={
+            'name': name,
+            'description': description,
+        })
+
+
+class TestGetImageSets:
+
+    def test_get_image_sets(self, client):
+        api = m.ImageSetsAPI(client)
+        api.get_image_sets()
+        api.client.get.assert_called_with(api.base_url)
