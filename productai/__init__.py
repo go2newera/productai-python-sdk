@@ -145,7 +145,7 @@ class API(object):
 
     @property
     def base_url(self):
-        return os.path.join(self.client.url_root, self.type_, self.id_)
+        return '/'.join([self.client.url_root, self.type_, self.id_])
 
 
 class ColorAnalysisAPI(API):
