@@ -177,6 +177,6 @@ class TestGetImageSets:
 class TestGetAllServicesInfo:
 
     def test_get_all_services_info(self, client):
-        api = m.CustomerServicesAPI(client)
+        api = m.CustomerServiceAPI(client)
         api.get_services()
         api.client.get.assert_called_with(api.base_url)

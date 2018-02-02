@@ -174,7 +174,7 @@ Get all customer services info
     from productai import Client
 
     cli = Client(access_key_id, access_key_secret)
-    api = cli.get_customer_services_api()
+    api = cli.get_customer_service_api()
     resp = api.get_services()
 
 
@@ -401,7 +401,7 @@ Set URL_ROOT
     from productai import Client
 
     cli = Client(access_key_id, access_key_secret)
-    api = cli.get_customer_services_api()
+    api = cli.get_customer_service_api()
     resp = api.get_services()
 
 
