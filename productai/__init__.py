@@ -39,12 +39,9 @@ class Client(object):
         return BatchAPI(self)
 
     def get_image_set_creating_api(self):
-        return ImageSetsAPI(self)
+        return ImageSetAPI(self)
 
-    def get_image_sets_api(self):
-        return ImageSetsAPI(self)
-
-    def get_image_set_api(self, image_set_id):
+    def get_image_set_api(self, image_set_id=None):
         return ImageSetAPI(self, image_set_id)
 
     def get_customer_service_api(self, service_id):
@@ -254,26 +251,9 @@ class BatchAPI(API):
         return self.client.get(endpoint)
 
 
-class ImageSetsAPI(API):
-
-    def __init__(self, client):
-        super(ImageSetsAPI, self).__init__(
-            client, 'image_sets', '_0000014'
-        )
-
-    def create_image_set(self, name, description=None):
-        data = {'name': name}
-        if description:
-            data['description'] = description
-        return self.client.post(self.base_url, json=data)
-
-    def get_image_sets(self):
-        return self.client.get(self.base_url)
-
-
 class ImageSetAPI(API):
 
-    def __init__(self, client, image_set_id):
+    def __init__(self, client, image_set_id=None):
         super(ImageSetAPI, self).__init__(
             client, 'image_sets', '_0000014'
         )
@@ -284,10 +264,21 @@ class ImageSetAPI(API):
 
     @property
     def base_url(self):
-        return '%s/%s' % (
-            super(ImageSetAPI, self).base_url,
-            self.image_set_id
-        )
+        if self.image_set_id:
+            return '%s/%s' % (
+                super(ImageSetAPI, self).base_url,
+                self.image_set_id
+            )
+        return super(ImageSetAPI, self).base_url
+
+    def create_image_set(self, name, description=None):
+        data = {'name': name}
+        if description:
+            data['description'] = description
+        return self.client.post(self.base_url, json=data)
+
+    def get_image_sets(self):
+        return self.client.get(self.base_url)
 
     def add_images_in_bulk(self, img_infos):
         '''批量添加图片'''

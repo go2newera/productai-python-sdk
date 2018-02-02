@@ -155,7 +155,7 @@ class TestCreateImageSet:
 
     def test_create_image_set(self, client):
         name, description = 'image set name', 'a description'
-        api = m.ImageSetsAPI(client)
+        api = m.ImageSetAPI(client)
         api.create_image_set(name=name)
         api.client.post.assert_called_with(api.base_url, json={'name': name})
 
@@ -169,6 +169,6 @@ class TestCreateImageSet:
 class TestGetImageSets:
 
     def test_get_image_sets(self, client):
-        api = m.ImageSetsAPI(client)
+        api = m.ImageSetAPI(client)
         api.get_image_sets()
         api.client.get.assert_called_with(api.base_url)

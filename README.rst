@@ -81,7 +81,7 @@ Get all image sets info
     from productai import Client
 
     cli = Client(access_key_id, access_key_secret)
-    api = cli.get_image_sets_api()
+    api = cli.get_image_set_api()
     resp = api.get_image_sets()
 
 
@@ -296,7 +296,7 @@ Set URL_ROOT
     from productai import Client
 
     cli = Client(access_key_id, access_key_secret)
-    api = cli.get_image_sets_api()
+    api = cli.get_image_set_api()
     resp = api.get_image_sets()
 
 
