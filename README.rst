@@ -166,7 +166,19 @@ Search images
     resp = api.query(image_url, count=10, tags={'and': ['MALE', 'SHOES', {'or': ['TMALL', 'TAOBAO']}]})
 
 
-Get customer service info
+Get all customer services info
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_customer_service_api()
+    resp = api.get_services()
+
+
+Get a given customer service info
 ~~~~~~~
 
 .. code-block:: python
@@ -381,7 +393,19 @@ Set URL_ROOT
     resp = api.query(image_url, count=10, tags={'and': ['MALE', 'SHOES', {'or': ['TMALL', 'TAOBAO']}]})
 
 
-获取自建服务信息
+获取所有自建服务信息
+~~~~~~~
+
+.. code-block:: python
+
+    from productai import Client
+
+    cli = Client(access_key_id, access_key_secret)
+    api = cli.get_customer_service_api()
+    resp = api.get_services()
+
+
+获取指定自建服务信息
 ~~~~~~~
 
 .. code-block:: python

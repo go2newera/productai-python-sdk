@@ -44,7 +44,7 @@ class Client(object):
     def get_image_set_api(self, image_set_id=None):
         return ImageSetAPI(self, image_set_id)
 
-    def get_customer_service_api(self, service_id):
+    def get_customer_service_api(self, service_id=None):
         return CustomerServiceAPI(self, service_id)
 
     def get_color_analysis_api(self, sub_type):
@@ -321,7 +321,7 @@ class ImageSetAPI(API):
 
 class CustomerServiceAPI(API):
 
-    def __init__(self, client, service_id):
+    def __init__(self, client, service_id=None):
         super(CustomerServiceAPI, self).__init__(
             client, 'customer_services', '_0000172'
         )
@@ -332,10 +332,15 @@ class CustomerServiceAPI(API):
 
     @property
     def base_url(self):
-        return '%s/%s' % (
-            super(CustomerServiceAPI, self).base_url,
-            self.service_id
-        )
+        if self.service_id:
+            return '%s/%s' % (
+                super(CustomerServiceAPI, self).base_url,
+                self.service_id
+            )
+        return super(CustomerServiceAPI, self).base_url
+
+    def get_services(self):
+        return self.client.get(self.base_url)
 
     def get_service(self):
         return self.client.get(self.base_url)
