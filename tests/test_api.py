@@ -128,7 +128,7 @@ class TestNormalizeImagesFile:
         csv_row = "http://x.com/a.jpg,12,good"
         f = tmpdir.mkdir('images').join('bulk1.csv')
         f.write(csv_row)
-        with m._normalize_images_file(str(f)) as r:
+        with m._normalize_items_file(str(f)) as r:
             assert r.read() == csv_row
 
     def test_should_return_file_as_it_is(self, tmpdir):
@@ -136,7 +136,7 @@ class TestNormalizeImagesFile:
         tf = tmpdir.mkdir('images').join('bulk1.csv')
         tf.write(csv_row)
         with open(str(tf)) as f:
-            with m._normalize_images_file(f) as r:
+            with m._normalize_items_file(f) as r:
                 assert r == f
 
     def test_should_create_tmp_file(self, tmpdir):
@@ -144,7 +144,7 @@ class TestNormalizeImagesFile:
             ['http://x.com/a.jpg', '12', 'good'],
             ['http://x.com/b.jpg', '13', 'bad'],
         ]
-        with m._normalize_images_file(imgs_info, tmpdir=str(tmpdir)) as f:
+        with m._normalize_items_file(imgs_info, tmpdir=str(tmpdir)) as f:
             reader = csv.reader(f)
             assert list(reader) == imgs_info
             assert tmpdir.listdir()

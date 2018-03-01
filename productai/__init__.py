@@ -50,6 +50,9 @@ class Client(object):
     def get_color_analysis_api(self, sub_type):
         return ColorAnalysisAPI(self, sub_type)
 
+    def get_product_set_api(self, product_set_id=None):
+        return ProductSetAPI(self, product_set_id)
+
     def get(self, api_url, **kwargs):
         headers = self.get_headers()
         resp = self.session.get(
@@ -282,12 +285,12 @@ class ImageSetAPI(API):
 
     def add_images_in_bulk(self, img_infos):
         '''批量添加图片'''
-        with _normalize_images_file(img_infos) as f:
+        with _normalize_items_file(img_infos) as f:
             files = {'urls_to_add': f}
         return self.client.post(self.base_url, files=files)
 
     def delete_images_in_bulk(self, img_infos):
-        with _normalize_images_file(img_infos) as f:
+        with _normalize_items_file(img_infos) as f:
             files = {'urls_to_delete': f}
         return self.client.post(self.base_url, files=files)
 
@@ -353,6 +356,111 @@ class CustomerServiceAPI(API):
         return self.client.delete(self.base_url)
 
 
+class ProductSetAPI(API):
+
+    def __init__(self, client, product_set_id=None):
+        super(ProductSetAPI, self).__init__(
+            # TODO: what's the id for product_sets service
+            client, 'product_sets', '_0000???'
+        )
+        self.product_set_id = product_set_id
+
+    def query(self, *args, **kwargs):
+        raise NotImplementedError()
+
+    @property
+    def base_url(self):
+        if self.product_set_id:
+            return '%s/%s' % (
+                super(ProductSetAPI, self).base_url,
+                self.product_set_id
+            )
+        return super(ProductSetAPI, self).base_url
+
+    def get_product_sets(self):
+        return self.client.get(self.base_url)
+
+    def delete_all_product_sets(self):
+        """
+        BE NOTICED: delete all product sets for current user
+        """
+        return self.client.delete(self.base_url)
+
+    def create_product_set(self, name, description=None):
+        data = {'name': name}
+        if description:
+            data['description'] = description
+        return self.client.post(self.base_url, json=data)
+
+    def get_product_set(self):
+        return self.client.get(self.base_url)
+
+    def update_product_set(self, name=None, description=None):
+        form = {}
+        if name:
+            form['name'] = name
+        if description:
+            form['description'] = description
+        return self.client.put(self.base_url, data=form)
+
+    def delete_product_set(self):
+        if self.product_set_id is None:
+            raise ValueError('product_set_id must be specified')
+        return self.client.delete(self.base_url)
+
+    def get_products(self, product_ids):
+        if self.product_set_id is None:
+            raise ValueError('product_set_id must be specified')
+        data = {'ids': product_ids}
+        return self.client.get(self.base_url + '/products', json=data)
+
+    def add_product(self, product_id, price, keywords, image_url, meta, tags):
+        if self.product_set_id is None:
+            raise ValueError('product_set_id must be specified')
+        form = {
+            'product_id': product_id,
+            'price': price,
+            'keywords': keywords,
+            'image_url': image_url,
+            'meta': meta,
+            'tags': tags
+        }
+        return self.client.post(self.base_url + '/products', form=form)
+
+    def add_products_in_bulk(self, products):
+        if self.product_set_id is None:
+            raise ValueError('product_set_id must be specified')
+        with _normalize_items_file(products) as f:
+            files = {'products_to_add': f}
+        return self.client.post(self.base_url + '/products', files=files)
+
+    def delete_products_in_bulk(self, products):
+        if self.product_set_id is None:
+            raise ValueError('product_set_id must be specified')
+        with _normalize_items_file(products) as f:
+            files = {'products_to_delete': f}
+        return self.client.post(self.base_url + '/products', files=files)
+
+    def delete_products(self, product_ids_to_delete):
+        if self.product_set_id is None:
+            raise ValueError('product_set_id must be specified')
+        ids_to_delete = []
+        if isinstance(product_ids_to_delete, six.string_types):
+            ids_to_delete = [product_ids_to_delete]
+        elif isinstance(product_ids_to_delete, list):
+            ids_to_delete = product_ids_to_delete
+        return self.client.delete(self.base_url + '/products', json={'ids': ids_to_delete})
+
+    def create_service(self, name, scenario):
+        if self.product_set_id is None:
+            raise ValueError('product_set_id must be specified')
+        data = {
+            'name': name,
+            'scenario': scenario
+        }
+        return self.client.post(self.base_url + '/services', json=data)
+
+
 def make_auth_headers(access_key_id):
     headers = {
         'x-ca-accesskeyid': access_key_id,
@@ -376,7 +484,7 @@ def get_default_session():
 
 
 @contextmanager
-def _normalize_images_file(x, tmpdir=None):
+def _normalize_items_file(x, tmpdir=None):
     if isinstance(x, six.string_types):
         with open(x) as f:
             yield f
