@@ -53,6 +53,9 @@ class Client(object):
     def get_product_set_api(self, product_set_id=None):
         return ProductSetAPI(self, product_set_id)
 
+    def get_product_search_api(self, id_):
+        return API(self, 'product_search', id_)
+
     def get(self, api_url, **kwargs):
         headers = self.get_headers()
         resp = self.session.get(
@@ -360,8 +363,7 @@ class ProductSetAPI(API):
 
     def __init__(self, client, product_set_id=None):
         super(ProductSetAPI, self).__init__(
-            # TODO: what's the id for product_sets service
-            client, 'product_sets', '_0000???'
+            client, 'product_sets', '_0000178'
         )
         self.product_set_id = product_set_id
 
@@ -378,24 +380,37 @@ class ProductSetAPI(API):
         return super(ProductSetAPI, self).base_url
 
     def get_product_sets(self):
-        return self.client.get(self.base_url)
+        """
+        list all product sets for current user
+        """
+        # ensure we are using api url without a specific product set id
+        api_url = super(ProductSetAPI, self).base_url
+        return self.client.get(api_url)
 
     def delete_all_product_sets(self):
         """
-        BE NOTICED: delete all product sets for current user
+        BE NOTICED: this will delete all product sets for current user
         """
-        return self.client.delete(self.base_url)
+        # ensure we are using api url without a specific product set id
+        api_url = super(ProductSetAPI, self).base_url
+        return self.client.delete(api_url)
 
     def create_product_set(self, name, description=None):
         data = {'name': name}
         if description:
             data['description'] = description
-        return self.client.post(self.base_url, json=data)
+        # ensure we are using api url without a specific product set id
+        api_url = super(ProductSetAPI, self).base_url
+        return self.client.post(api_url, json=data)
 
     def get_product_set(self):
+        if self.product_set_id is None:
+            raise ValueError('product_set_id must be specified')
         return self.client.get(self.base_url)
 
     def update_product_set(self, name=None, description=None):
+        if self.product_set_id is None:
+            raise ValueError('product_set_id must be specified')
         form = {}
         if name:
             form['name'] = name
@@ -425,7 +440,7 @@ class ProductSetAPI(API):
             'meta': meta,
             'tags': tags
         }
-        return self.client.post(self.base_url + '/products', form=form)
+        return self.client.post(self.base_url + '/products', data=form)
 
     def add_products_in_bulk(self, products):
         if self.product_set_id is None:
