@@ -544,12 +544,13 @@ class TrainingSetAPI(API):
         }
         return self.client.delete(endpoint, data=data)
 
-    def create_service(self, name, description, training_set_id, scenario='classifier'):
+    def create_service(self, name, description, scenario='classifier'):
+        if not self.training_set_id:
+            raise ValueError('training_set_id must be specified.')
         endpoint = os.path.join(self.base_url, 'service')
         data = {
             'name': name,
             'description': description,
-            'training_set_id': training_set_id,
             'scenario': scenario
         }
         return self.client.post(endpoint, data=data)
