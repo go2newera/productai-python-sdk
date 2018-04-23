@@ -515,14 +515,14 @@ class TrainingSetAPI(API):
         endpoint = os.path.join(self.base_url, 'training_set')
         return self.client.delete(endpoint)
 
-    def batch_add_images(self, file):
+    def add_training_data_in_bulk(self, file):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
         files = { 'csv_file': file }
         endpoint = os.path.join(self.base_url, 'training_set', 'file')
         return self.client.post(endpoint, files=files)
 
-    def batch_delete_images(self, file):
+    def delete_training_data_in_bulk(self, file):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
         files = { 'csv_file': file }
@@ -543,6 +543,16 @@ class TrainingSetAPI(API):
             "token": base64.b64encode("selfserve_admin:{}".format(name))
         }
         return self.client.delete(endpoint, data=data)
+
+    def create_service(self, name, description, training_set_id, scenario='classifier'):
+        endpoint = os.path.join(self.base_url, 'service')
+        data = {
+            'name': name,
+            'description': description,
+            'training_set_id': training_set_id,
+            'scenario': scenario
+        }
+        return self.client.post(endpoint, data=data)
 
 
 class CustomTrainingAPI(API):
@@ -585,16 +595,6 @@ class CustomTrainingAPI(API):
         else:
             endpoint = os.path.join(self.base_url, 'service')
             return self.client.delete(endpoint)
-
-    def add_service(self, name, description, training_set_id, scenario='classifier'):
-        endpoint = os.path.join(self.base_url, 'service')
-        data = {
-            'name': name,
-            'description': description,
-            'training_set_id': training_set_id,
-            'scenario': scenario
-        }
-        return self.client.post(endpoint, data=data)
 
     def predict(self, image):
         if not self.service_id:
