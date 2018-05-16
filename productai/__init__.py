@@ -366,6 +366,62 @@ class CustomerServiceAPI(API):
         return self.client.delete(self.base_url)
 
 
+class ProductSearchAPI(API):
+
+    def __init__(self, client, service_id=None):
+        super(ProductSearchAPI, self).__init__(
+            client, 'product_search', '_0000178'
+        )
+        self.service_id = service_id
+        self._client = client
+
+    def query(self, image, loc='0-0-1-1', count=20, tags=None, keywords=None, min_price=None, max_price=None, **kwargs):
+        _args = {
+            'keywords': keywords,
+            'min_price': min_price,
+            'max_price': max_price,
+        }
+        if kwargs is not None:
+            _args.update(kwargs)
+        return super(ProductSearchAPI, self).query(image, loc, count, tags, **_args)
+
+    @property
+    def base_url(self):
+        if self.service_id:
+            return '%s/%s' % (
+                super(ProductSearchAPI, self).base_url,
+                self.service_id
+            )
+        else:
+            return super(ProductSearchAPI, self).base_url
+
+    def list_services(self):
+        endpoint = os.path.join(super(ProductSearchAPI, self).base_url, 'service', 'list')
+        return self.client.get(endpoint)
+
+    def get_service(self):
+        if not self.service_id:
+            raise ValueError('service_id must be specified.')
+        else:
+            endpoint = os.path.join(self.base_url, 'service', 'view')
+            data = {'service_id': self.service_id}
+            return self.client.get(endpoint, data=data)
+
+    def update_service(self, name):
+        if not self.service_id:
+            raise ValueError('service_id must be specified.')
+        else:
+            data = {'name': name}
+            return self.client.put(self.base_url, json=data)
+
+    def delete_service(self):
+        if not self.service_id:
+            raise ValueError('service_id must be specified.')
+        else:
+            endpoint = os.path.join(self.base_url, 'service')
+            return self.client.delete(endpoint)
+
+
 class ProductSetAPI(API):
 
     def __init__(self, client, product_set_id=None):
@@ -506,7 +562,7 @@ class TrainingSetAPI(API):
 
     def add_training_set(self, name, description):
         endpoint = os.path.join(super(TrainingSetAPI, self).base_url, 'training_set')
-        data = { "name": name, "description": description }
+        data = {"name": name, "description": description}
         return self.client.post(endpoint, data=data)
 
     def delete_training_set(self):
@@ -518,14 +574,14 @@ class TrainingSetAPI(API):
     def add_training_data_in_bulk(self, file):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        files = { 'csv_file': file }
+        files = {'csv_file': file}
         endpoint = os.path.join(self.base_url, 'training_set', 'file')
         return self.client.post(endpoint, files=files)
 
     def delete_training_data_in_bulk(self, file):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        files = { 'csv_file': file }
+        files = {'csv_file': file}
         endpoint = os.path.join(self.base_url, 'training_set', 'file')
         return self.client.delete(endpoint, files=files)
 
@@ -587,7 +643,7 @@ class CustomTrainingAPI(API):
             raise ValueError('service_id must be specified.')
         else:
             endpoint = os.path.join(self.base_url, 'service', 'view')
-            data = { 'service_id': self.service_id }
+            data = {'service_id': self.service_id}
             return self.client.get(endpoint, data=data)
 
     def delete_service(self):
@@ -612,7 +668,6 @@ class CustomTrainingAPI(API):
                 files = {'image': image}
 
             return self.client.post(endpoint, data=data, files=files)
-
 
 
 def make_auth_headers(access_key_id):
