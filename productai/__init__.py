@@ -423,8 +423,8 @@ class ProductSearchAPI(API):
                 raise ValueError('The keys %r are in conflict with built-in parameters.' % bad_keys)
             data.update(kwargs)
 
-        endpoint = '/'.join([self.client.url_root, 'product_search', self.id_, self.service_id])
-        return self.client.get(endpoint, data=data, files=files)
+        endpoint = '/'.join([self.client.url_root, 'product_search', self.service_id])
+        return self.client.post(endpoint, data=data, files=files)
 
     def list_services(self):
         endpoint = os.path.join(super(ProductSearchAPI, self).base_url, 'services')
