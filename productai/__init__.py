@@ -60,8 +60,8 @@ class Client(object):
     def get_training_set_api(self, training_set_id=None):
         return TrainingSetAPI(self, training_set_id)
 
-    def get_product_search_api(self, id_):
-        return API(self, 'product_search', id_)
+    def get_product_search_api(self, product_search_id=None):
+        return ProductSearchAPI(self, product_search_id)
 
     def get(self, api_url, **kwargs):
         headers = self.get_headers()
@@ -88,6 +88,17 @@ class Client(object):
     def put(self, api_url, data=None, json=None, timeout=30):
         headers = self.get_headers()
         resp = self.session.put(
+            api_url,
+            data=data,
+            json=json,
+            headers=headers,
+            timeout=timeout
+        )
+        return resp
+
+    def patch(self, api_url, data=None, json=None, timeout=30):
+        headers = self.get_headers()
+        resp = self.session.patch(
             api_url,
             data=data,
             json=json,
@@ -366,6 +377,91 @@ class CustomerServiceAPI(API):
         return self.client.delete(self.base_url)
 
 
+class ProductSearchAPI(API):
+
+    def __init__(self, client, service_id=None):
+        super(ProductSearchAPI, self).__init__(
+            client, 'product_sets', '_0000178'
+        )
+        self.service_id = service_id
+        self._client = client
+
+    @property
+    def base_url(self):
+        if self.service_id:
+            return '%s/services/%s' % (
+                super(ProductSearchAPI, self).base_url,
+                self.service_id
+            )
+        else:
+            return super(ProductSearchAPI, self).base_url
+
+    def query(self, image, loc='0-0-1-1', count=20, tags=None, keywords=None, min_price=None, max_price=None, **kwargs):
+        data = {
+            'loc': loc,
+            'count': count,
+        }
+
+        if tags:
+            if isinstance(tags, six.string_types):
+                data['tags'] = tags
+            elif isinstance(tags, list):
+                data['tags'] = '|'.join(tags)
+            elif isinstance(tags, dict):
+                data['tags'] = json.dumps(tags)
+
+        if keywords:
+            if isinstance(keywords, six.string_types):
+                data['keywords'] = keywords
+            elif isinstance(keywords, list):
+                data['keywords'] = ' '.join(keywords)
+
+        if min_price:
+            data['min_price'] = min_price
+
+        if max_price:
+            data['max_price'] = max_price
+
+        files = None
+        if isinstance(image, six.string_types):
+            data['url'] = image
+        elif hasattr(image, 'read'):
+            files = {'search': image}
+
+        if kwargs:
+            bad_keys = [k for k in ['url', 'search'] if k in kwargs]
+            if len(bad_keys) > 0:
+                raise ValueError('The keys %r are in conflict with built-in parameters.' % bad_keys)
+            data.update(kwargs)
+
+        endpoint = '/'.join([self.client.url_root, 'product_search', self.service_id])
+        return self.client.post(endpoint, data=data, files=files)
+
+    def list_services(self):
+        endpoint = os.path.join(super(ProductSearchAPI, self).base_url, 'services')
+        return self.client.get(endpoint)
+
+    def get_service(self):
+        if not self.service_id:
+            raise ValueError('service_id must be specified.')
+        else:
+            return self.client.get(self.base_url)
+
+    def update_service(self, name):
+        if not self.service_id:
+            raise ValueError('service_id must be specified.')
+        else:
+            data = {'name': name}
+            return self.client.patch(self.base_url, json=data)
+
+    def delete_service(self):
+        if not self.service_id:
+            raise ValueError('service_id must be specified.')
+        else:
+            endpoint = os.path.join(self.base_url, 'service')
+            return self.client.delete(endpoint)
+
+
 class ProductSetAPI(API):
 
     def __init__(self, client, product_set_id=None):
@@ -506,7 +602,7 @@ class TrainingSetAPI(API):
 
     def add_training_set(self, name, description):
         endpoint = os.path.join(super(TrainingSetAPI, self).base_url, 'training_set')
-        data = { "name": name, "description": description }
+        data = {"name": name, "description": description}
         return self.client.post(endpoint, data=data)
 
     def delete_training_set(self):
@@ -518,14 +614,14 @@ class TrainingSetAPI(API):
     def add_training_data_in_bulk(self, file):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        files = { 'csv_file': file }
+        files = {'csv_file': file}
         endpoint = os.path.join(self.base_url, 'training_set', 'file')
         return self.client.post(endpoint, files=files)
 
     def delete_training_data_in_bulk(self, file):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        files = { 'csv_file': file }
+        files = {'csv_file': file}
         endpoint = os.path.join(self.base_url, 'training_set', 'file')
         return self.client.delete(endpoint, files=files)
 
@@ -587,7 +683,7 @@ class CustomTrainingAPI(API):
             raise ValueError('service_id must be specified.')
         else:
             endpoint = os.path.join(self.base_url, 'service', 'view')
-            data = { 'service_id': self.service_id }
+            data = {'service_id': self.service_id}
             return self.client.get(endpoint, data=data)
 
     def delete_service(self):
@@ -612,7 +708,6 @@ class CustomTrainingAPI(API):
                 files = {'image': image}
 
             return self.client.post(endpoint, data=data, files=files)
-
 
 
 def make_auth_headers(access_key_id):
