@@ -96,6 +96,17 @@ class Client(object):
         )
         return resp
 
+    def patch(self, api_url, data=None, json=None, timeout=30):
+        headers = self.get_headers()
+        resp = self.session.patch(
+            api_url,
+            data=data,
+            json=json,
+            headers=headers,
+            timeout=timeout
+        )
+        return resp
+
     def delete(self, api_url, **kwargs):
         headers = self.get_headers()
         resp = self.session.delete(
