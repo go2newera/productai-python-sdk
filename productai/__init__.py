@@ -60,8 +60,8 @@ class Client(object):
     def get_training_set_api(self, training_set_id=None):
         return TrainingSetAPI(self, training_set_id)
 
-    def get_product_search_api(self, id_):
-        return API(self, 'product_search', id_)
+    def get_product_search_api(self, product_search_id=None):
+        return ProductSearchAPI(self, product_search_id)
 
     def get(self, api_url, **kwargs):
         headers = self.get_headers()
