@@ -370,49 +370,78 @@ class ProductSearchAPI(API):
 
     def __init__(self, client, service_id=None):
         super(ProductSearchAPI, self).__init__(
-            client, 'product_search', '_0000178'
+            client, 'product_sets', '_0000178'
         )
         self.service_id = service_id
         self._client = client
 
-    def query(self, image, loc='0-0-1-1', count=20, tags=None, keywords=None, min_price=None, max_price=None, **kwargs):
-        _args = {
-            'keywords': keywords,
-            'min_price': min_price,
-            'max_price': max_price,
-        }
-        if kwargs is not None:
-            _args.update(kwargs)
-        return super(ProductSearchAPI, self).query(image, loc, count, tags, **_args)
-
     @property
     def base_url(self):
         if self.service_id:
-            return '%s/%s' % (
+            return '%s/services/%s' % (
                 super(ProductSearchAPI, self).base_url,
                 self.service_id
             )
         else:
             return super(ProductSearchAPI, self).base_url
 
+    def query(self, image, loc='0-0-1-1', count=20, tags=None, keywords=None, min_price=None, max_price=None, **kwargs):
+        data = {
+            'loc': loc,
+            'count': count,
+        }
+
+        if tags:
+            if isinstance(tags, six.string_types):
+                data['tags'] = tags
+            elif isinstance(tags, list):
+                data['tags'] = '|'.join(tags)
+            elif isinstance(tags, dict):
+                data['tags'] = json.dumps(tags)
+
+        if keywords:
+            if isinstance(keywords, six.string_types):
+                data['keywords'] = keywords
+            elif isinstance(keywords, list):
+                data['keywords'] = ' '.join(keywords)
+
+        if min_price:
+            data['min_price'] = min_price
+
+        if max_price:
+            data['max_price'] = max_price
+
+        files = None
+        if isinstance(image, six.string_types):
+            data['url'] = image
+        elif hasattr(image, 'read'):
+            files = {'search': image}
+
+        if kwargs:
+            bad_keys = [k for k in ['url', 'search'] if k in kwargs]
+            if len(bad_keys) > 0:
+                raise ValueError('The keys %r are in conflict with built-in parameters.' % bad_keys)
+            data.update(kwargs)
+
+        endpoint = '/'.join([self.client.url_root, 'product_search', self.id_, self.service_id])
+        return self.client.get(endpoint, data=data, files=files)
+
     def list_services(self):
-        endpoint = os.path.join(super(ProductSearchAPI, self).base_url, 'service', 'list')
+        endpoint = os.path.join(super(ProductSearchAPI, self).base_url, 'services')
         return self.client.get(endpoint)
 
     def get_service(self):
         if not self.service_id:
             raise ValueError('service_id must be specified.')
         else:
-            endpoint = os.path.join(self.base_url, 'service', 'view')
-            data = {'service_id': self.service_id}
-            return self.client.get(endpoint, data=data)
+            return self.client.get(self.base_url)
 
     def update_service(self, name):
         if not self.service_id:
             raise ValueError('service_id must be specified.')
         else:
             data = {'name': name}
-            return self.client.put(self.base_url, json=data)
+            return self.client.patch(self.base_url, json=data)
 
     def delete_service(self):
         if not self.service_id:
