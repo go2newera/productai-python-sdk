@@ -458,8 +458,7 @@ class ProductSearchAPI(API):
         if not self.service_id:
             raise ValueError('service_id must be specified.')
         else:
-            endpoint = os.path.join(self.base_url, 'service')
-            return self.client.delete(endpoint)
+            return self.client.delete(self.base_url)
 
 
 class ProductSetAPI(API):
