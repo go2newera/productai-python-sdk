@@ -600,10 +600,27 @@ class TrainingSetAPI(API):
         else:
             return super(TrainingSetAPI, self).base_url
 
-    def add_training_set(self, name, description):
+    def get_training_set(self):
+        if not self.training_set_id:
+            raise ValueError('training_set_id must be specified.')
+        endpoint = os.path.join(self.base_url, 'training_set')
+        return self.client.get(endpoint)
+
+    def create_training_set(self, name, description):
         endpoint = os.path.join(super(TrainingSetAPI, self).base_url, 'training_set')
         data = {"name": name, "description": description}
         return self.client.post(endpoint, data=data)
+
+    def update_training_set(self, name=None, description=None):
+        if not self.training_set_id:
+            raise ValueError('training_set_id must be specified.')
+        endpoint = os.path.join(self.base_url, 'training_set')
+        form = {}
+        if name:
+            form['name'] = name
+        if description:
+            form['description'] = description
+        return self.client.put(endpoint, data=form)
 
     def delete_training_set(self):
         if not self.training_set_id:
@@ -685,6 +702,14 @@ class CustomTrainingAPI(API):
             endpoint = os.path.join(self.base_url, 'service', 'view')
             data = {'service_id': self.service_id}
             return self.client.get(endpoint, data=data)
+
+    def update_service(self, name):
+        if not self.service_id:
+            raise ValueError('service_id must be specified.')
+        else:
+            endpoint = os.path.join(self.base_url, 'service')
+            data = {'name': name}
+            return self.client.put(endpoint, data=data)
 
     def delete_service(self):
         if not self.service_id:
