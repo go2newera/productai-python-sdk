@@ -14,19 +14,22 @@ ProductAI SDK for Python
 ProductAI® SDKs enable using ProductAI® APIs easily in the programming language of your choice. You can use our Python SDK to send image queries and maintain your datasets.
 
 installation
-----
+--------------------
 
 .. code-block:: bash
 
     $ pip install productai
 
 Usage
-~~~~~~
+--------
 
-Please read [ProductAI Developers Documentation](https://developers.productai.com/en/)
+Please read `ProductAI Developers Documentation <https://developers.productai.com/en/>`_
 
 API Endpoint
-~~~~~~
+------------------
+
+- For using ProductAI out of China, please set API endpoint to https://api.productai.com
+- For using ProductAI in China, please set API endpoint to https://api.productai.cn
 
 - For using ProductAI out of China, please set API endpoint to https://api.productai.com
 - For using ProductAI in China, please set API endpoint to https://api.productai.cn
@@ -43,19 +46,24 @@ API Endpoint
 
 
 安装
-----
+--------
 
 .. code-block:: bash
 
     $ pip install productai
 
-使用说明
-~~~~~~
 
-请阅读[ProductAI开发者文档](https://developers.productai.cn/zh/)
+使用说明
+--------
+
+请阅读 `ProductAI开发者文档 <https://developers.productai.cn/zh/>`_
+
 
 API节点
-~~~~~~
+--------
+
+- 在中国大陆以外地区调用ProductAI，请使用API地址 https://api.productai.com
+- 在中国大陆地区调用ProductAI，请使用API地址 https://api.productai.cn
 
 - 在中国大陆以外地区调用ProductAI，请使用API地址 https://api.productai.com
 - 在中国大陆地区调用ProductAI，请使用API地址 https://api.productai.cn
@@ -69,4 +77,3 @@ API节点
     or
     cli = Client(access_key_id, access_key_secret)
     cli.url_root = 'https://api.productai.com'
-
