@@ -510,7 +510,7 @@ class TrainingSetAPI(API):
         endpoint = os.path.join(self.base_url, 'training_set')
         return self.client.get(endpoint)
 
-    def add_training_set(self, name, description):
+    def create_training_set(self, name, description):
         endpoint = os.path.join(super(TrainingSetAPI, self).base_url, 'training_set')
         data = { "name": name, "description": description }
         return self.client.post(endpoint, data=data)
