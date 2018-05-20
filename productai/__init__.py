@@ -308,12 +308,12 @@ class ImageSetAPI(API):
         '''批量添加图片'''
         with _normalize_items_file(img_infos) as f:
             files = {'urls_to_add': f}
-        return self.client.post(self.base_url, files=files)
+            return self.client.post(self.base_url, files=files)
 
     def delete_images_in_bulk(self, img_infos):
         with _normalize_items_file(img_infos) as f:
             files = {'urls_to_delete': f}
-        return self.client.post(self.base_url, files=files)
+            return self.client.post(self.base_url, files=files)
 
     def add_image(self, image_url, meta=None, tags=''):
         form = {'image_url': image_url, 'meta': meta, 'tags': tags}
