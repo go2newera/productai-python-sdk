@@ -31,9 +31,6 @@ API Endpoint
 - For using ProductAI out of China, please set API endpoint to https://api.productai.com
 - For using ProductAI in China, please set API endpoint to https://api.productai.cn
 
-- For using ProductAI out of China, please set API endpoint to https://api.productai.com
-- For using ProductAI in China, please set API endpoint to https://api.productai.cn
-
 .. code-block:: python
 
     from productai import Client
@@ -61,9 +58,6 @@ API Endpoint
 
 API节点
 --------
-
-- 在中国大陆以外地区调用ProductAI，请使用API地址 https://api.productai.com
-- 在中国大陆地区调用ProductAI，请使用API地址 https://api.productai.cn
 
 - 在中国大陆以外地区调用ProductAI，请使用API地址 https://api.productai.com
 - 在中国大陆地区调用ProductAI，请使用API地址 https://api.productai.cn
