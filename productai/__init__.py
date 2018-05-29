@@ -438,7 +438,7 @@ class ProductSearchAPI(API):
         return self.client.post(endpoint, data=data, files=files)
 
     def list_services(self):
-        endpoint = os.path.join(super(ProductSearchAPI, self).base_url, 'services')
+        endpoint = '%s/%s' % (super(ProductSearchAPI, self).base_url, 'services')
         return self.client.get(endpoint)
 
     def get_service(self):
@@ -602,18 +602,18 @@ class TrainingSetAPI(API):
     def get_training_set(self):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        endpoint = os.path.join(self.base_url, 'training_set')
+        endpoint = '%s/%s' % (self.base_url, 'training_set')
         return self.client.get(endpoint)
 
     def create_training_set(self, name, description):
-        endpoint = os.path.join(super(TrainingSetAPI, self).base_url, 'training_set')
+        endpoint = '%s/%s' % (super(TrainingSetAPI, self).base_url, 'training_set')
         data = {"name": name, "description": description}
         return self.client.post(endpoint, data=data)
 
     def update_training_set(self, name=None, description=None):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        endpoint = os.path.join(self.base_url, 'training_set')
+        endpoint = '%s/%s' % (self.base_url, 'training_set')
         form = {}
         if name:
             form['name'] = name
@@ -624,31 +624,31 @@ class TrainingSetAPI(API):
     def delete_training_set(self):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        endpoint = os.path.join(self.base_url, 'training_set')
+        endpoint = '%s/%s' % (self.base_url, 'training_set')
         return self.client.delete(endpoint)
 
     def add_training_data_in_bulk(self, file):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
         files = {'csv_file': file}
-        endpoint = os.path.join(self.base_url, 'training_set', 'file')
+        endpoint = '%s/%s/%s' % (self.base_url, 'training_set', 'file')
         return self.client.post(endpoint, files=files)
 
     def delete_training_data_in_bulk(self, file):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
         files = {'csv_file': file}
-        endpoint = os.path.join(self.base_url, 'training_set', 'file')
+        endpoint = '%s/%s/%s' % (self.base_url, 'training_set', 'file')
         return self.client.delete(endpoint, files=files)
 
     def list_training_sets(self):
-        endpoint = os.path.join(super(TrainingSetAPI, self).base_url, 'training_set')
+        endpoint = '%s/%s' % (super(TrainingSetAPI, self).base_url, 'training_set')
         return self.client.get(endpoint)
 
     def clear_training_set(self, name):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        endpoint = os.path.join(self.base_url, 'training_set', 'clear')
+        endpoint = '%s/%s/%s' % (self.base_url, 'training_set', 'clear')
         data = {
             "training_set_id": self.training_set_id,
             "name": name,
@@ -659,7 +659,7 @@ class TrainingSetAPI(API):
     def create_service(self, name, description, scenario='classifier'):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        endpoint = os.path.join(self.base_url, 'service')
+        endpoint = '%s/%s' % (self.base_url, 'service')
         data = {
             'name': name,
             'description': description,
@@ -691,14 +691,14 @@ class CustomTrainingAPI(API):
             return super(CustomTrainingAPI, self).base_url
 
     def list_services(self):
-        endpoint = os.path.join(super(CustomTrainingAPI, self).base_url, 'service', 'list')
+        endpoint = '%s/%s/%s' % (super(CustomTrainingAPI, self).base_url, 'service', 'list')
         return self.client.get(endpoint)
 
     def get_service(self):
         if not self.service_id:
             raise ValueError('service_id must be specified.')
         else:
-            endpoint = os.path.join(self.base_url, 'service', 'view')
+            endpoint = '%s/%s/%s' % (self.base_url, 'service', 'view')
             data = {'service_id': self.service_id}
             return self.client.get(endpoint, data=data)
 
@@ -706,7 +706,7 @@ class CustomTrainingAPI(API):
         if not self.service_id:
             raise ValueError('service_id must be specified.')
         else:
-            endpoint = os.path.join(self.base_url, 'service')
+            endpoint = '%s/%s' % (self.base_url, 'service')
             data = {'name': name}
             return self.client.put(endpoint, data=data)
 
@@ -714,14 +714,14 @@ class CustomTrainingAPI(API):
         if not self.service_id:
             raise ValueError('service_id must be specified.')
         else:
-            endpoint = os.path.join(self.base_url, 'service')
+            endpoint = '%s/%s' % (self.base_url, 'service')
             return self.client.delete(endpoint)
 
     def predict(self, image):
         if not self.service_id:
             raise ValueError('service_id must be specified.')
         else:
-            endpoint = os.path.join(
+            endpoint = '%s/%s/%s' % (
                 self.url_root_, 'custom_training', str(self.service_id))
             files = dict()
             data = dict()
