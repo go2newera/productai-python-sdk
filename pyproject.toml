@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "productai"
+version = "0.7.7"
+description = ""
+authors = ["Malong <pypi@malongtech.com>"]
+license = "MIT"
+readme = 'README.rst'
+repository = 'https://github.com/MalongTech/productai-python-sdk'
+homepage = 'https://github.com/MalongTech/productai-python-sdk'
+
+[tool.poetry.dependencies]
+python = "~2.7 || ^3.5"
+requests = "^2.12.1"
+six = "^1.10.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^3.5"
+pytest-mock = "^1.2"
