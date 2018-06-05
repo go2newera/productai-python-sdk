@@ -608,7 +608,7 @@ class TrainingSetAPI(API):
             raise ValueError('training_set_id must be specified.')
         return self.client.get(self.base_url)
 
-    def create_training_set(self, name, description):
+    def create_training_set(self, name, description=None):
         data = { "name": name, "description": description }
         endpoint = '%s/%s' % (
             super(TrainingSetAPI, self).base_url,
