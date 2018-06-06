@@ -592,63 +592,70 @@ class TrainingSetAPI(API):
     @property
     def base_url(self):
         if self.training_set_id:
-            return '%s/%s' % (
+            return '%s/%s/%s' % (
                 super(TrainingSetAPI, self).base_url,
+                'training_sets',
                 self.training_set_id
             )
         else:
-            return super(TrainingSetAPI, self).base_url
+            return '%s/%s' % (
+                super(TrainingSetAPI, self).base_url,
+                'training_sets'
+            )
 
     def get_training_set(self):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        endpoint = '%s/%s' % (self.base_url, 'training_set')
-        return self.client.get(endpoint)
+        return self.client.get(self.base_url)
 
-    def create_training_set(self, name, description):
-        endpoint = '%s/%s' % (super(TrainingSetAPI, self).base_url, 'training_set')
-        data = {"name": name, "description": description}
+    def create_training_set(self, name, description=None):
+        data = { "name": name, "description": description }
+        endpoint = '%s/%s' % (
+            super(TrainingSetAPI, self).base_url,
+            'training_sets'
+        )
         return self.client.post(endpoint, data=data)
 
     def update_training_set(self, name=None, description=None):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        endpoint = '%s/%s' % (self.base_url, 'training_set')
         form = {}
         if name:
             form['name'] = name
         if description:
             form['description'] = description
-        return self.client.put(endpoint, data=form)
+        return self.client.put(self.base_url, data=form)
 
     def delete_training_set(self):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        endpoint = '%s/%s' % (self.base_url, 'training_set')
-        return self.client.delete(endpoint)
+        return self.client.delete(self.base_url)
 
     def add_training_data_in_bulk(self, file):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        files = {'csv_file': file}
-        endpoint = '%s/%s/%s' % (self.base_url, 'training_set', 'file')
+        files = { 'urls_to_add': file }
+        endpoint = '%s/%s' % (self.base_url, 'images')
         return self.client.post(endpoint, files=files)
 
     def delete_training_data_in_bulk(self, file):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        files = {'csv_file': file}
-        endpoint = '%s/%s/%s' % (self.base_url, 'training_set', 'file')
+        files = { 'urls_to_delete': file }
+        endpoint = '%s/%s' % (self.base_url, 'images')
         return self.client.delete(endpoint, files=files)
 
     def list_training_sets(self):
-        endpoint = '%s/%s' % (super(TrainingSetAPI, self).base_url, 'training_set')
+        endpoint = '%s/%s' % (
+            super(TrainingSetAPI, self).base_url,
+            'training_sets'
+        )
         return self.client.get(endpoint)
 
     def clear_training_set(self, name):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        endpoint = '%s/%s/%s' % (self.base_url, 'training_set', 'clear')
+        endpoint = '%s/%s' % (self.base_url, 'clear')
         data = {
             "training_set_id": self.training_set_id,
             "name": name,
@@ -659,7 +666,7 @@ class TrainingSetAPI(API):
     def create_service(self, name, description, scenario='classifier'):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
-        endpoint = '%s/%s' % (self.base_url, 'service')
+        endpoint = '%s/%s' % (self.base_url, 'services')
         data = {
             'name': name,
             'description': description,
@@ -683,53 +690,57 @@ class CustomTrainingAPI(API):
     @property
     def base_url(self):
         if self.service_id:
-            return '%s/%s' % (
+            return '%s/%s/%s' % (
                 super(CustomTrainingAPI, self).base_url,
+                'services',
                 self.service_id
             )
         else:
-            return super(CustomTrainingAPI, self).base_url
+            return '%s/%s' % (
+                super(CustomTrainingAPI, self).base_url,
+                'services'
+            )
 
     def list_services(self):
-        endpoint = '%s/%s/%s' % (super(CustomTrainingAPI, self).base_url, 'service', 'list')
+        endpoint = '%s/%s' % (super(CustomTrainingAPI, self).base_url, 'services')
         return self.client.get(endpoint)
 
     def get_service(self):
         if not self.service_id:
             raise ValueError('service_id must be specified.')
         else:
-            endpoint = '%s/%s/%s' % (self.base_url, 'service', 'view')
-            data = {'service_id': self.service_id}
-            return self.client.get(endpoint, data=data)
+            data = { 'service_id': self.service_id }
+            return self.client.get(self.base_url, data=data)
 
     def update_service(self, name):
         if not self.service_id:
             raise ValueError('service_id must be specified.')
         else:
-            endpoint = '%s/%s' % (self.base_url, 'service')
             data = {'name': name}
-            return self.client.put(endpoint, data=data)
+            return self.client.put(self.base_url, data=data)
 
     def delete_service(self):
         if not self.service_id:
             raise ValueError('service_id must be specified.')
         else:
-            endpoint = '%s/%s' % (self.base_url, 'service')
-            return self.client.delete(endpoint)
+            return self.client.delete(self.base_url)
 
     def predict(self, image):
         if not self.service_id:
             raise ValueError('service_id must be specified.')
         else:
             endpoint = '%s/%s/%s' % (
-                self.url_root_, 'custom_training', str(self.service_id))
+                self.url_root_,
+                'custom_training',
+                str(self.service_id)
+            )
             files = dict()
             data = dict()
 
             if isinstance(image, six.string_types):
-                data['image_url'] = image
+                data['url'] = image
             elif hasattr(image, 'read'):
-                files = {'image': image}
+                files = {'search': image}
 
             return self.client.post(endpoint, data=data, files=files)
 
