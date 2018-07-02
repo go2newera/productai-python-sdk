@@ -608,12 +608,17 @@ class TrainingSetAPI(API):
             raise ValueError('training_set_id must be specified.')
         return self.client.get(self.base_url)
 
-    def create_training_set(self, name, description=None):
+    def create_training_set(self, name, description=None, **kwargs):
         data = { "name": name, "description": description }
         endpoint = '%s/%s' % (
             super(TrainingSetAPI, self).base_url,
             'training_sets'
         )
+        if kwargs:
+            bad_keys = [k for k in ['name', 'description'] if k in kwargs]
+            if len(bad_keys) > 0:
+                raise ValueError('The keys %r are in conflict with built-in parameters.' % bad_keys)
+            data.update(kwargs)
         return self.client.post(endpoint, data=data)
 
     def update_training_set(self, name=None, description=None):
@@ -659,11 +664,11 @@ class TrainingSetAPI(API):
         data = {
             "training_set_id": self.training_set_id,
             "name": name,
-            "token": base64.b64encode("selfserve_admin:{}".format(name))
+            "token": base64.b64encode("selfserve_admin:{}".format(name).encode())
         }
         return self.client.delete(endpoint, data=data)
 
-    def create_service(self, name, description, scenario='classifier'):
+    def create_service(self, name, description, scenario='classifier', **kwargs):
         if not self.training_set_id:
             raise ValueError('training_set_id must be specified.')
         endpoint = '%s/%s' % (self.base_url, 'services')
@@ -672,6 +677,11 @@ class TrainingSetAPI(API):
             'description': description,
             'scenario': scenario
         }
+        if kwargs:
+            bad_keys = [k for k in ['name', 'description', 'scenario'] if k in kwargs]
+            if len(bad_keys) > 0:
+                raise ValueError('The keys %r are in conflict with built-in parameters.' % bad_keys)
+            data.update(kwargs)
         return self.client.post(endpoint, data=data)
 
 
@@ -725,7 +735,7 @@ class CustomTrainingAPI(API):
         else:
             return self.client.delete(self.base_url)
 
-    def predict(self, image):
+    def predict(self, image, **kwargs):
         if not self.service_id:
             raise ValueError('service_id must be specified.')
         else:
@@ -741,7 +751,11 @@ class CustomTrainingAPI(API):
                 data['url'] = image
             elif hasattr(image, 'read'):
                 files = {'search': image}
-
+            if kwargs:
+                bad_keys = [k for k in ['image'] if k in kwargs]
+                if len(bad_keys) > 0:
+                    raise ValueError('The keys %r are in conflict with built-in parameters.' % bad_keys)
+                data.update(kwargs)
             return self.client.post(endpoint, data=data, files=files)
 
 
