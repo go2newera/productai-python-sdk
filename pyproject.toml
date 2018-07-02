@@ -14,5 +14,5 @@ requests = "^2.12.1"
 six = "^1.10.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^3.5"
+pytest = "^3.6"
 pytest-mock = "^1.2"
