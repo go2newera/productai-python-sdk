@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "productai"
-version = "0.7.10"
+version = "0.7.11"
 description = ""
 authors = ["Malong <pypi@malongtech.com>"]
 license = "MIT"
