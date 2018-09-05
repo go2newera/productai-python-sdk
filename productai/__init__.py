@@ -525,7 +525,22 @@ class ProductSetAPI(API):
             raise ValueError('product_set_id must be specified')
         return self.client.delete(self.base_url)
 
+    def list_products(self, count=20, page=0):
+        if self.product_set_id is None:
+            raise ValueError('product_set_id must be specified')
+
+        if count is None or not isinstance(count, int) or count < 1:
+            raise ValueError('count must be an integer, which is greater than 0.')
+
+        if page is None or not isinstance(page, int) or page < 0:
+            raise ValueError('page must be an integer, which is greater than or equal to 0.')
+        
+        return self.client.get(self.base_url + '/products?page={}&count={}'.format(page, count))
+
     def get_products(self, product_ids):
+        """
+        This function (and backend API) is being obsoleted. Don't use it anymore.
+        """
         if self.product_set_id is None:
             raise ValueError('product_set_id must be specified')
         data = {'ids': product_ids}
