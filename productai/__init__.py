@@ -33,6 +33,10 @@ class Client(object):
     def get_api(self, type_, id_):
         return API(self, type_, id_)
 
+    def get_bad_case_api(self):
+        from productai.bad_case import BadCaseApi
+        return BadCaseApi(self)
+
     def get_image_search_api(self, id_):
         return API(self, 'search', id_)
 
