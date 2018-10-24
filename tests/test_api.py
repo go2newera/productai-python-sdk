@@ -4,10 +4,7 @@ import pytest
 
 import productai as m
 
-
-@pytest.fixture()
-def client(mocker):
-    return mocker.Mock(url_root='https://api.example.com')
+from . import client
 
 
 class TestQuery:
