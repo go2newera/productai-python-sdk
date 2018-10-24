@@ -1,9 +1,17 @@
 # -*- coding=utf8 -*-
 import pytest
 
+from productai import Client
 from productai.bad_case import BadCaseApi
 
 from . import client
+
+
+def test_get_test_case_api():
+    cli = Client('', '')
+    api = cli.get_bad_case_api()
+    assert isinstance(api, BadCaseApi)
+    assert api.client == cli
 
 
 def test_add_test_case(client, mocker):
